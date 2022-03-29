@@ -6,14 +6,27 @@
     @Title: Management of list of contacts in address book
 '''
 
-from venv import create
-
 
 class AddressBook:
 
     def __init__(self) -> None:
         self.contact_list = {}
-
+    
+    def add_contact(self, first_name = "", last_name = "", address = "", city = "", state = "", zip = "", phone = "", email = ""):
+        """
+            Description:
+                add a contact using first & last names, address, city, state, zip, 
+                phone number and email to the address book
+            
+            Parameter:
+                first name, last name, address, city, state, zip, phone number and email
+            
+            Return:
+                None
+        """
+        contact = Contact()
+        contact.create_contact(first_name, last_name, address, city, state, zip, phone, email)
+        self.contact_list[contact.name] = contact
 
 class Contact:
 
@@ -27,10 +40,16 @@ class Contact:
         self.phone = ""
         self.email = ""
     
-    def create_contact(self, first_name, last_name = None, address = None, city = None, state = None, zip = None, phone = None, email = None):
+    def getname(self):
+        return self.first_name + " " + self.last_name
+
+    name = property(getname)
+    
+    def create_contact(self, first_name = "", last_name = "", address = "", city = "", state = "", zip = "", phone = "", email = ""):
         """
             Description:
-                Creates a contact using first & last names, address, city, state, zip, phone number and email
+                Creates a contact using first & last names, address, city, state, zip, 
+                phone number and email
             
             Parameter:
                 first name, last name, address, city, state, zip, phone number and email
