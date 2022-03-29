@@ -50,6 +50,22 @@ class AddressBook:
         if contact_to_edit.name != name:
             self.contact_list.pop(name)
             self.contact_list[contact_to_edit.name] = contact_to_edit
+    
+    def delete_contact(self, name):
+        """
+            Description:
+                Deletes the contact of the matching name.
+            
+            Parameters:
+                name(name of contact to delete)
+            
+            Return:
+                None
+        """
+        if name not in self.contact_list.keys():
+            raise KeyError("Name does not match any contact")
+        self.contact_list.pop(name)
+
 
 class Contact:
 
