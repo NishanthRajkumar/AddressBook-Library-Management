@@ -25,6 +25,11 @@ class AddressBookTest(unittest.TestCase):
         updated_contact = self.book.contact_list["Jeffy Raj"]
         self.assertEqual(updated_contact.__str__(), expected_contact.__str__())
         self.assertRaises(KeyError, self.book.edit_contact, name="Sam", last_name="Raj")
+    
+    def test_delete_contact(self):
+        self.book.delete_contact(name="Nishanth Rajkumar")
+        self.assertFalse("Nishanth Rajkumar" in self.book.contact_list.keys())
+
 
 if __name__ == "__main__":
     unittest.main()
