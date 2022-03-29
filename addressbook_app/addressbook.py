@@ -65,6 +65,25 @@ class AddressBook:
         if name not in self.contact_list.keys():
             raise KeyError("Name does not match any contact")
         self.contact_list.pop(name)
+    
+    def add_multiple_contacts(self, list_of_contacts):
+        """
+            Description:
+                add the list of contacts to address book
+            
+            Parameter:
+                list of contacts as list type
+            
+            Return:
+                True if successfully added
+        """
+        for item in list_of_contacts:
+            if isinstance(item, Contact) == False:
+                raise TypeError("List of contacts had non contact objects")
+            if item.name in self.contact_list.keys():
+                raise KeyError(f"Contact with name {item.name} already exists")
+            self.contact_list[item.name] = item
+        return True
 
 
 class Contact:
