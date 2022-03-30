@@ -19,6 +19,8 @@ class AddressBookTest(unittest.TestCase):
         self.book1.add_contact("Jeffy", phone="9952429630")
         self.book2.add_contact("Nish", email="nish@gmail.com", city="Bangalore")
         self.book2.add_contact("Neth", email="neth@gmail.com", city="Melbourne")
+        self.book2.add_contact("Jeff", phone="9011090729", city="Bangalore", state="Karnataka")
+        self.book2.add_contact("Blessy", phone="9011090728", city="Mysore", state="Karnataka")
 
     def test_add_contact(self):
         self.assertEqual(len(self.book1.contact_list), 2)
@@ -64,14 +66,20 @@ class AddressBookTest(unittest.TestCase):
         self.assertEqual(len(self.library.get_locationwise_search_result("Nish", "Karnataka")), 1)
     
     def test_location_wise_contact_list(self):
-        self.book2.add_contact("Jeff", phone="9011090729", city="Bangalore", state="Karnataka")
-        self.book2.add_contact("Blessy", phone="9011090728", city="Mysore", state="Karnataka")
         self.assertEqual(len(self.book2.get_locationwise_contact_list("Bangalore", "city")), 2)
         self.assertEqual(len(self.book2.get_locationwise_contact_list("Karnataka")), 2)
         self.assertRaises(ValueError, self.book2.get_locationwise_contact_list, "Karnataka", "stat")
         self.assertRaises(KeyError, self.book2.get_locationwise_contact_list, "BLR", "city")
         self.assertRaises(KeyError, self.book2.get_locationwise_contact_list, "KA")
 
+    def test_locationwise_count(self):
+        statewise_count = self.book2.get_locationwise_count()
+        citywise_count = self.book2.get_locationwise_count("city")
+        self.assertEqual(len(statewise_count), 1)
+        self.assertEqual(statewise_count["Karnataka"], 2)
+        self.assertEqual(len(citywise_count), 3)
+        self.assertEqual(citywise_count["Bangalore"], 2)
+        self.assertRaises(ValueError, self.book2.get_locationwise_count, "cities")
 
 if __name__ == "__main__":
     unittest.main()
