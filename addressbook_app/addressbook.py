@@ -285,3 +285,16 @@ class AddressBook:
                     continue
                 location_wise_count[location_name] = len(contact_list)
         return location_wise_count
+    
+    def get_sorted_contact_list(self):
+        """
+            Description:
+                Sorts contact list in alphabetical order
+            
+            Parameter:
+                None
+            
+            Return:
+                None
+        """
+        self.contact_list = {key: val for key, val in sorted(self.contact_list.items(), key = lambda item: item[0])}
