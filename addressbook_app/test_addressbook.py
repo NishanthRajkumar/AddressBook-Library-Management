@@ -6,12 +6,15 @@
     @Title: Unit testing the address book project
 '''
 import unittest
+
+from matplotlib.style import library
 from addressbook import AddressBook, Contact
 from addressbook_library import AddressBookLibrary
 
 class AddressBookTest(unittest.TestCase):
 
     def setUp(self) -> None:
+        self.library = AddressBookLibrary()
         self.book1 = AddressBook("book1")
         self.book2 = AddressBook("book2")
         self.book1.add_contact("Nishanth", "Rajkumar", phone="9901104972")
@@ -49,10 +52,18 @@ class AddressBookTest(unittest.TestCase):
         self.assertRaises(KeyError, self.book1.add_multiple_contacts, contact_list1)
     
     def test_add_multiple_addressbooks(self):
-        library = AddressBookLibrary()
-        self.assertTrue(library.add_multiple_addressbooks([self.book1, self.book2]))
-        self.book3 = AddressBook("book2")
-        self.assertRaises(KeyError, library.add_multiple_addressbooks, [self.book3])
+        self.assertTrue(self.library.add_multiple_addressbooks([self.book1, self.book2]))
+        book3 = AddressBook("book2")
+        self.assertRaises(KeyError, self.library.add_multiple_addressbooks, [book3])
+    
+    def test_location_wise_search_results(self):
+        book3 = AddressBook("book3")
+        book3.add_contact("Neth", phone="45011097", city="Melbourne")
+        book3.add_contact("Nish", email="nish@gmail.com", state="Karnataka")
+        self.library.add_multiple_addressbooks([self.book1, self.book2, book3])
+        self.assertEqual(len(self.library.get_locationwise_search_result("Neth", "Melbourne", "city")), 2)
+        self.assertEqual(len(self.library.get_locationwise_search_result("Nish", "Karnataka", "state")), 1)
+        self.assertEqual(len(self.library.get_locationwise_search_result("Nish", "Karnataka")), 1)
 
 
 if __name__ == "__main__":
