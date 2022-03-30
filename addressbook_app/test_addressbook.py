@@ -6,8 +6,6 @@
     @Title: Unit testing the address book project
 '''
 import unittest
-
-from matplotlib.style import library
 from addressbook import AddressBook, Contact
 from addressbook_library import AddressBookLibrary
 
