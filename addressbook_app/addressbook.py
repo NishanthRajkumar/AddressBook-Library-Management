@@ -259,3 +259,29 @@ class AddressBook:
             if location_name not in self.contact_list_by_city.keys():
                 raise KeyError(f"{location_name} is not in list of existing cities of contacts")
             return self.contact_list_by_city[location_name]
+    
+    def get_locationwise_count(self, location_type: str = "state") -> dict[str, int]:
+        """
+            Description:
+                returns a location wise count of the no of contacts
+            
+            Parameter:
+                location_type: 'city' or 'state'. Default: 'state'
+            
+            Return:
+                returns a dictionary
+        """
+        location_wise_count = {}
+        if location_type != "state" and location_type != "city":
+            raise ValueError("Location type input must either 'state' or 'city' only")
+        if location_type == "state":
+            for location_name, contact_list in self.contact_list_by_state.items():
+                if location_name == "":
+                    continue
+                location_wise_count[location_name] = len(contact_list)
+        else:
+            for location_name, contact_list in self.contact_list_by_city.items():
+                if location_name == "":
+                    continue
+                location_wise_count[location_name] = len(contact_list)
+        return location_wise_count
