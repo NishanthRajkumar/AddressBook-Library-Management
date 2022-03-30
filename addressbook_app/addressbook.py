@@ -5,6 +5,7 @@
     @Last Modified time: 30-03-2022 17:10:00
     @Title: Management of list of contacts in address book
 '''
+import csv
 import pickle
 from typing import Callable, Type
 
@@ -328,3 +329,12 @@ class AddressBook:
         #content = pickle.dumps(self.contact_list)
         pickle.dump(self.contact_list, txt_file_stream)
         txt_file_stream.close()
+    
+    def save_as_csv_file(self):
+        contact_fields = ['first_name', 'last_name', 'address', 'city', 'state', 'zip', 'phone', 'email']
+        csv_file_stream = open(f"{self.name}.csv", mode='w')
+        csv_writer = csv.writer(csv_file_stream)
+        csv_writer.writerow(contact_fields)
+        for _, contact in self.contact_list.items():
+            csv_writer.writerow([contact.first_name, contact.last_name, contact.address, contact.city, contact.state, contact.zip, contact.phone, contact.email])
+        csv_file_stream.close()
