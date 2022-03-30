@@ -1,15 +1,15 @@
 '''
     @Author: Nishanth
-    @Date: 29-03-2022 20:54:00
+    @Date: 30-03-2022 08:16:00
     @Last Modified by: Nishanth
-    @Last Modified time: 29-03-2022 20:54:00
+    @Last Modified time: 30-03-2022 08:16:00
     @Title: Management of list of contacts in address book
 '''
 
 
 class AddressBook:
 
-    def __init__(self, name) -> None:
+    def __init__(self, name: str = "") -> None:
         self.contact_list = {}
         self.name = name
     
@@ -26,11 +26,13 @@ class AddressBook:
             Return:
                 None
         """
-        contact = Contact()
-        contact.create_contact(first_name, last_name, address, city, state, zip, phone, email)
-        self.contact_list[contact.name] = contact
+        contact_to_add = Contact()
+        contact_to_add.create_contact(first_name, last_name, address, city, state, zip, phone, email)
+        if contact_to_add == self.contact_list.get(contact_to_add.name):
+            raise KeyError(f"{contact_to_add.name} already exists in addressbook")
+        self.contact_list[contact_to_add.name] = contact_to_add
     
-    def edit_contact(self, name, first_name = None, last_name = None, address = None, city = None, state = None, zip = None, phone = None, email = None):
+    def edit_contact(self, name: str, first_name: str = None, last_name: str = None, address: str = None, city: str = None, state: str = None, zip: str = None, phone: str = None, email: str = None):
         """
             Description:
                 edits the contact of the matching name.
@@ -52,7 +54,7 @@ class AddressBook:
             self.contact_list.pop(name)
             self.contact_list[contact_to_edit.name] = contact_to_edit
     
-    def delete_contact(self, name):
+    def delete_contact(self, name: str):
         """
             Description:
                 Deletes the contact of the matching name.
@@ -67,7 +69,7 @@ class AddressBook:
             raise KeyError("Name does not match any contact")
         self.contact_list.pop(name)
     
-    def add_multiple_contacts(self, list_of_contacts):
+    def add_multiple_contacts(self, list_of_contacts: list):
         """
             Description:
                 add the list of contacts to address book
@@ -143,7 +145,8 @@ class Contact:
         """
             Description:
                 Creates a contact using first & last names, address, city, state, zip, 
-                phone number and email
+                phone number and email. Only give parameter of contact to update.
+                The remaining values will remain same as the old value
             
             Parameter:
                 first name, last name, address, city, state, zip, phone number and email.
@@ -180,3 +183,8 @@ class Contact:
         contact_as_string += f"Phone: {self.phone}, "
         contact_as_string += f"Email: {self.email}"
         return contact_as_string
+    
+    def __eq__(self, contact) -> bool:
+        if isinstance(contact, Contact):
+            return self.name == contact.name
+        return False

@@ -1,3 +1,10 @@
+'''
+    @Author: Nishanth
+    @Date: 30-03-2022 08:16:00
+    @Last Modified by: Nishanth
+    @Last Modified time: 30-03-2022 08:16:00
+    @Title: Management of list of contacts in address book
+'''
 from addressbook import AddressBook
 from addressbook_library import AddressBookLibrary
 
