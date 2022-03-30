@@ -80,6 +80,11 @@ class AddressBookTest(unittest.TestCase):
         self.assertEqual(len(citywise_count), 3)
         self.assertEqual(citywise_count["Bangalore"], 2)
         self.assertRaises(ValueError, self.book2.get_locationwise_count, "cities")
+    
+    def test_contact_sort(self):
+        self.book2.get_sorted_contact_list()
+        self.assertEqual(list(self.book2.contact_list)[0], "Blessy")
+        self.assertEqual(list(self.book2.contact_list)[-1], "Nish")
 
 if __name__ == "__main__":
     unittest.main()
