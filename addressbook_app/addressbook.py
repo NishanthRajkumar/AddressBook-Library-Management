@@ -1,10 +1,11 @@
 '''
     @Author: Nishanth
-    @Date: 30-03-2022 08:16:00
+    @Date: 30-03-2022 17:10:00
     @Last Modified by: Nishanth
-    @Last Modified time: 30-03-2022 08:16:00
+    @Last Modified time: 30-03-2022 17:10:00
     @Title: Management of list of contacts in address book
 '''
+import pickle
 from typing import Callable, Type
 
 
@@ -310,3 +311,20 @@ class AddressBook:
         elif sort_by == "zip":
             sort_condition = lambda item: item[1].zip
         self.contact_list = {key: val for key, val in sorted(self.contact_list.items(), key = sort_condition)}
+    
+    def save_as_txt_file(self):
+        """
+            Description:
+                saves the contact list of the address book to text file.
+                The name of the text file will be same as name of addressbook.
+            
+            Parameter:
+                None
+            
+            Return:
+                None
+        """
+        txt_file_stream = open(f"{self.name}.txt", mode='wb')
+        #content = pickle.dumps(self.contact_list)
+        pickle.dump(self.contact_list, txt_file_stream)
+        txt_file_stream.close()
