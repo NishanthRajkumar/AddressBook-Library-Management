@@ -9,8 +9,9 @@
 
 class AddressBook:
 
-    def __init__(self) -> None:
+    def __init__(self, name) -> None:
         self.contact_list = {}
+        self.name = name
     
     def add_contact(self, first_name = "", last_name = "", address = "", city = "", state = "", zip = "", phone = "", email = ""):
         """
