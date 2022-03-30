@@ -6,6 +6,7 @@
     @Title: Management of list of contacts in address book
 '''
 import csv
+import json
 import pickle
 from typing import Callable, Type
 
@@ -116,6 +117,49 @@ class Contact:
         if isinstance(contact, Contact):
             return self.name == contact.name
         return False
+
+    def get_dict(self) -> dict[str, str]:
+        """
+            Description:
+                converts the contact to dictionary and returns it
+            
+            Parameter:
+                None
+            
+            Return:
+                Dictionary dict[str, str]
+        """
+        contact_dict = {}
+        contact_dict['first_name'] = self.first_name
+        contact_dict['last_name'] = self.last_name
+        contact_dict['address'] = self.address
+        contact_dict['city'] = self.city
+        contact_dict['state'] = self.state
+        contact_dict['zip'] = self.zip
+        contact_dict['phone'] = self.phone
+        contact_dict['email'] = self.email
+        return contact_dict
+    
+    def set_details_from_dict(self, contact_dict):
+        """
+            Description:
+                converts the dictionary to contact and saves the values
+            
+            Parameter:
+                None
+            
+            Return:
+                None
+        """
+        self.first_name = contact_dict['first_name']
+        self.last_name = contact_dict['last_name']
+        self.address = contact_dict['address']
+        self.city = contact_dict['city']
+        self.state = contact_dict['state']
+        self.zip = contact_dict['zip']
+        self.phone = contact_dict['phone']
+        self.email = contact_dict['email']
+
 
 class AddressBook:
 
@@ -338,3 +382,11 @@ class AddressBook:
         for _, contact in self.contact_list.items():
             csv_writer.writerow([contact.first_name, contact.last_name, contact.address, contact.city, contact.state, contact.zip, contact.phone, contact.email])
         csv_file_stream.close()
+    
+    def save_as_json_file(self):
+        with open(f"{self.name}.json", "w") as jsonfile:
+            list_of_contacts= {}
+            for key, contact in self.contact_list.items():
+                list_of_contacts[key] = contact.get_dict()
+            json_object = json.dumps(list_of_contacts, indent=4)
+            jsonfile.write(json_object)
