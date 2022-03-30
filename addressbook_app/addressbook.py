@@ -87,6 +87,24 @@ class AddressBook:
                 raise KeyError(f"Contact with name {item.name} already exists")
             self.contact_list[item.name] = item
         return True
+    
+    def get_locationwise_search_result(self, search_name: str, location_condition, location_name):
+        """
+            Description:
+                search Person in a City or State across the multiple Address Books
+            
+            Parameter:
+                search_name: name to search for in the addressbooks.
+                location_condition: The condition to match for location wise search result
+            
+            Return:
+                returns a contact from the search results if available, else returns None
+        """
+        if search_name not in self.contact_list.keys():
+            return None
+        if location_condition(self.contact_list[search_name], location_name):
+            return self.contact_list[search_name]
+        return None
 
 
 class Contact:

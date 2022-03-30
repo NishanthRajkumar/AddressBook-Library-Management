@@ -30,3 +30,30 @@ class AddressBookLibrary:
                 raise KeyError(f"Addresbook with name {item.name} already exists")
             self.addressbook_list[item.name] = item
         return True
+    
+    def get_locationwise_search_result(self, search_name: str, location_name: str, location_type: str = "state") -> list:
+        """
+            Description:
+                search Person in a City or State across the multiple Address Books
+            
+            Parameter:
+                search_name: name to search for in the addressbooks.
+                location_name: name of location to filter the search results.
+                location_type: location type should be "city" or "state". Default: "state"
+            
+            Return:
+                returns a list of contacts from the search results
+        """
+        location_type = location_type.casefold()
+        if location_type != "state" and location_type != "city":
+            raise ValueError("Location type input must either 'state' or 'city' only")
+        if location_type == "state":
+            location_condition = lambda contact, state: contact.state == state
+        else:
+            location_condition = lambda contact, city: contact.city == city
+        search_results = []
+        for _, addressbook in self.addressbook_list.items():
+            contact = addressbook.get_locationwise_search_result(search_name, location_condition, location_name)
+            if contact != None:
+                search_results.append(contact)
+        return search_results

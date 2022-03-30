@@ -29,3 +29,13 @@ for name, addressbook in mylibrary.addressbook_list.items():
     print(f"Addressbook name: {name}")
     for name, contact in addressbook.contact_list.items():
         print(f"{name}: {contact}")
+
+book3 = AddressBook("book3")
+book3.add_contact("Neth", phone="45011097", city="Melbourne")
+book3.add_contact("Nish", email="nish@gmail.com", state="Karnataka")
+mylibrary.add_multiple_addressbooks([book3])
+
+for contact in mylibrary.get_locationwise_search_result("Neth", "Melbourne", "city"):
+    print(contact)
+for contact in mylibrary.get_locationwise_search_result("Nish", "Karnataka"):
+    print(contact)
