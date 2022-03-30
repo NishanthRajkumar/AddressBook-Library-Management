@@ -6,6 +6,7 @@
     @Title: Unit testing the address book project
 '''
 import csv
+import json
 import pickle
 import unittest
 from addressbook import AddressBook, Contact
@@ -124,7 +125,19 @@ class AddressBookTest(unittest.TestCase):
             contact.city, contact.state, contact.zip, contact.phone, contact.email = (row[3], row[4], row[5], row[6], row[7])
             expected_list[contact.name] = contact
         file_stream.close()
-        self.assertEqual(self.book2.contact_list.keys(), expected_list.keys())
+        self.assertEqual(self.book2.contact_list, expected_list)
+
+    def test_save_as_json_file(self):
+        self.book2.save_as_json_file()
+        jsonfile = open("book2.json")
+        data = json.load(jsonfile)
+        expected_contact_list = {}
+        for name, contact_dict in data.items():
+            contact = Contact()
+            contact.set_details_from_dict(contact_dict)
+            expected_contact_list[name] = contact
+        jsonfile.close()
+        self.assertEqual(self.book2.contact_list, expected_contact_list)
 
 if __name__ == "__main__":
     unittest.main()
