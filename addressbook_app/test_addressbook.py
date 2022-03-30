@@ -62,6 +62,15 @@ class AddressBookTest(unittest.TestCase):
         self.assertEqual(len(self.library.get_locationwise_search_result("Neth", "Melbourne", "city")), 2)
         self.assertEqual(len(self.library.get_locationwise_search_result("Nish", "Karnataka", "state")), 1)
         self.assertEqual(len(self.library.get_locationwise_search_result("Nish", "Karnataka")), 1)
+    
+    def test_location_wise_contact_list(self):
+        self.book2.add_contact("Jeff", phone="9011090729", city="Bangalore", state="Karnataka")
+        self.book2.add_contact("Blessy", phone="9011090728", city="Mysore", state="Karnataka")
+        self.assertEqual(len(self.book2.get_locationwise_contact_list("Bangalore", "city")), 2)
+        self.assertEqual(len(self.book2.get_locationwise_contact_list("Karnataka")), 2)
+        self.assertRaises(ValueError, self.book2.get_locationwise_contact_list, "Karnataka", "stat")
+        self.assertRaises(KeyError, self.book2.get_locationwise_contact_list, "BLR", "city")
+        self.assertRaises(KeyError, self.book2.get_locationwise_contact_list, "KA")
 
 
 if __name__ == "__main__":
