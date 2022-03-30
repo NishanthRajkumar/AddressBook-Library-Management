@@ -286,15 +286,27 @@ class AddressBook:
                 location_wise_count[location_name] = len(contact_list)
         return location_wise_count
     
-    def get_sorted_contact_list(self):
+    def get_sorted_contact_list(self, sort_by: str = "name"):
         """
             Description:
                 Sorts contact list in alphabetical order
             
             Parameter:
-                None
+                sort_condition is a callable type used as key selector in sorting.
+                Accepted values are "name", "state", "city" and "zip"
             
             Return:
                 None
         """
-        self.contact_list = {key: val for key, val in sorted(self.contact_list.items(), key = lambda item: item[0])}
+        sort_by = sort_by.casefold()
+        if sort_by not in ["name", "state", "city", "zip"]:
+            raise ValueError("Location type input must either 'state' or 'city' only")
+        if sort_by == "name":
+            sort_condition = lambda item: item[1].name
+        elif sort_by == "state":
+            sort_condition = lambda item: item[1].state
+        elif sort_by == "city":
+            sort_condition = lambda item: item[1].city
+        elif sort_by == "zip":
+            sort_condition = lambda item: item[1].zip
+        self.contact_list = {key: val for key, val in sorted(self.contact_list.items(), key = sort_condition)}
