@@ -5,106 +5,7 @@
     @Last Modified time: 30-03-2022 08:16:00
     @Title: Management of list of contacts in address book
 '''
-
-
-class AddressBook:
-
-    def __init__(self, name: str = "") -> None:
-        self.contact_list = {}
-        self.name = name
-    
-    def add_contact(self, first_name = "", last_name = "", address = "", city = "", state = "", zip = "", phone = "", email = ""):
-        """
-            Description:
-                add a contact using first & last names, address, city, state, zip, 
-                phone number and email to the address book
-            
-            Parameter:
-                first name, last name, address, city, state, zip, phone number and email.
-                Default value = ""
-            
-            Return:
-                None
-        """
-        contact_to_add = Contact()
-        contact_to_add.create_contact(first_name, last_name, address, city, state, zip, phone, email)
-        if contact_to_add == self.contact_list.get(contact_to_add.name):
-            raise KeyError(f"{contact_to_add.name} already exists in addressbook")
-        self.contact_list[contact_to_add.name] = contact_to_add
-    
-    def edit_contact(self, name: str, first_name: str = None, last_name: str = None, address: str = None, city: str = None, state: str = None, zip: str = None, phone: str = None, email: str = None):
-        """
-            Description:
-                edits the contact of the matching name.
-                if updated first_name and last_name are not provided, then old name remains
-            
-            Parameters:
-                name(name of contact to edit), first name, last name, address, city, state, zip, phone number and email
-                Default value = None
-                If value is not given for any parameter, that parameter is ignored when setting contact details
-            
-            Return:
-                None
-        """
-        if name not in self.contact_list.keys():
-            raise KeyError("Name does not match any contact")
-        contact_to_edit = self.contact_list[name]
-        contact_to_edit.edit_contact(first_name, last_name, address, city, state, zip, phone, email)
-        if contact_to_edit.name != name:
-            self.contact_list.pop(name)
-            self.contact_list[contact_to_edit.name] = contact_to_edit
-    
-    def delete_contact(self, name: str):
-        """
-            Description:
-                Deletes the contact of the matching name.
-            
-            Parameters:
-                name(name of contact to delete)
-            
-            Return:
-                None
-        """
-        if name not in self.contact_list.keys():
-            raise KeyError("Name does not match any contact")
-        self.contact_list.pop(name)
-    
-    def add_multiple_contacts(self, list_of_contacts: list):
-        """
-            Description:
-                add the list of contacts to address book
-            
-            Parameter:
-                list of contacts as list type
-            
-            Return:
-                True if successfully added
-        """
-        for item in list_of_contacts:
-            if isinstance(item, Contact) == False:
-                raise TypeError("List of contacts had non contact objects")
-            if item.name in self.contact_list.keys():
-                raise KeyError(f"Contact with name {item.name} already exists")
-            self.contact_list[item.name] = item
-        return True
-    
-    def get_locationwise_search_result(self, search_name: str, location_condition, location_name):
-        """
-            Description:
-                search Person in a City or State across the multiple Address Books
-            
-            Parameter:
-                search_name: name to search for in the addressbooks.
-                location_condition: The condition to match for location wise search result
-            
-            Return:
-                returns a contact from the search results if available, else returns None
-        """
-        if search_name not in self.contact_list.keys():
-            return None
-        if location_condition(self.contact_list[search_name], location_name):
-            return self.contact_list[search_name]
-        return None
+from typing import Callable, Type
 
 
 class Contact:
@@ -136,6 +37,13 @@ class Contact:
             return self.first_name
         return self.first_name + " " + self.last_name
 
+    def getcity(self):
+        return self.city
+    def getstate(self):
+        return self.state
+    
+    city_value = property(getcity)
+    state_value = property(getstate)
     name = property(getname)
 
     def create_contact(self, first_name = "", last_name = "", address = "", city = "", state = "", zip = "", phone = "", email = ""):
@@ -206,3 +114,148 @@ class Contact:
         if isinstance(contact, Contact):
             return self.name == contact.name
         return False
+
+class AddressBook:
+
+    def __init__(self, name: str = "") -> None:
+        self.name = name
+        self.contact_list: dict[str, type[Contact]] = {}
+        self.contact_list_by_state: dict[str, list[type[Contact]]] = {}
+        self.contact_list_by_city: dict[str, list[type[Contact]]] = {}
+    
+    def add_contact(self, first_name = "", last_name = "", address = "", city = "", state = "", zip = "", phone = "", email = ""):
+        """
+            Description:
+                add a contact using first & last names, address, city, state, zip, 
+                phone number and email to the address book
+            
+            Parameter:
+                first name, last name, address, city, state, zip, phone number and email.
+                Default value = ""
+            
+            Return:
+                None
+        """
+        contact_to_add = Contact()
+        contact_to_add.create_contact(first_name, last_name, address, city, state, zip, phone, email)
+        if contact_to_add == self.contact_list.get(contact_to_add.name):
+            raise KeyError(f"{contact_to_add.name} already exists in addressbook")
+        self.contact_list[contact_to_add.name] = contact_to_add
+        self.update_contact_list_by_location(contact_to_add)
+    
+    def edit_contact(self, name: str, first_name: str = None, last_name: str = None, address: str = None, city: str = None, state: str = None, zip: str = None, phone: str = None, email: str = None):
+        """
+            Description:
+                edits the contact of the matching name.
+                if updated first_name and last_name are not provided, then old name remains
+            
+            Parameters:
+                name(name of contact to edit), first name, last name, address, city, state, zip, phone number and email
+                Default value = None
+                If value is not given for any parameter, that parameter is ignored when setting contact details
+            
+            Return:
+                None
+        """
+        if name not in self.contact_list.keys():
+            raise KeyError("Name does not match any contact")
+        contact_to_edit = self.contact_list[name]
+        contact_to_edit.edit_contact(first_name, last_name, address, city, state, zip, phone, email)
+        if contact_to_edit.name != name:
+            self.contact_list.pop(name)
+            self.contact_list[contact_to_edit.name] = contact_to_edit
+    
+    def delete_contact(self, name: str):
+        """
+            Description:
+                Deletes the contact of the matching name.
+            
+            Parameters:
+                name(name of contact to delete)
+            
+            Return:
+                None
+        """
+        if name not in self.contact_list.keys():
+            raise KeyError("Name does not match any contact")
+        self.contact_list.pop(name)
+    
+    def add_multiple_contacts(self, list_of_contacts: list[type[Contact]]):
+        """
+            Description:
+                add the list of contacts to address book
+            
+            Parameter:
+                list of contacts as list type
+            
+            Return:
+                True if successfully added
+        """
+        for item in list_of_contacts:
+            if isinstance(item, Contact) == False:
+                raise TypeError("List of contacts had non contact objects")
+            if item.name in self.contact_list.keys():
+                raise KeyError(f"Contact with name {item.name} already exists")
+            self.contact_list[item.name] = item
+        return True
+    
+    def get_locationwise_search_result(self, search_name: str, location_condition: Callable[[type[Contact], str], bool], location_name: str) -> Type[Contact]:
+        """
+            Description:
+                search Person in a City or State across the multiple Address Books
+            
+            Parameter:
+                search_name: name to search for in the addressbooks.
+                location_condition: The condition to match for location wise search result
+            
+            Return:
+                returns a contact from the search results if available, else returns None
+        """
+        if search_name not in self.contact_list.keys():
+            return None
+        if location_condition(self.contact_list[search_name], location_name):
+            return self.contact_list[search_name]
+        return None
+
+    def update_contact_list_by_location(self, contact: type[Contact]):
+        """
+            Description:
+                Store contacts by city and state
+            
+            Parameter:
+                contact of type Contact
+            
+            Return:
+                None
+        """
+        if contact.city_value not in self.contact_list_by_city.keys():
+            self.contact_list_by_city[contact.city_value] = list()
+        self.contact_list_by_city[contact.city_value].append(contact)
+
+        if contact.state_value not in self.contact_list_by_state.keys():
+            self.contact_list_by_state[contact.state_value] = list()
+        self.contact_list_by_state[contact.state_value].append(contact)
+    
+    def get_locationwise_contact_list(self, location_name: str, location_type: str = "state") -> list[type[Contact]]:
+        """
+            Description:
+                get locationwise contact list
+            
+            Parameter:
+                location_name: name of the location
+                location_type: value is either "city" or "state". Default: "state"
+            
+            Return:
+                returns a list of contacts 
+        """
+        location_type = location_type.casefold()
+        if location_type != "state" and location_type != "city":
+            raise ValueError("Location type input must either 'state' or 'city' only")
+        if location_type == "state":
+            if location_name not in self.contact_list_by_state.keys():
+                raise KeyError(f"{location_name} is not in list of existing states of contacts")
+            return self.contact_list_by_state[location_name]
+        else:
+            if location_name not in self.contact_list_by_city.keys():
+                raise KeyError(f"{location_name} is not in list of existing cities of contacts")
+            return self.contact_list_by_city[location_name]

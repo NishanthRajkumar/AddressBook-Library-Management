@@ -5,14 +5,14 @@
     @Last Modified time: 30-03-2022 08:16:00
     @Title: Management of list of address books in Library system
 '''
-from addressbook import AddressBook
+from addressbook import AddressBook, Contact
 
 class AddressBookLibrary:
 
     def __init__(self) -> None:
-        self.addressbook_list = {}
+        self.addressbook_list: dict[str, type[AddressBook]] = {}
     
-    def add_multiple_addressbooks(self, list_of_addressbooks: list):
+    def add_multiple_addressbooks(self, list_of_addressbooks: list[type[AddressBook]]):
         """
             Description:
                 adds the list of addressbooks given to the library
@@ -31,7 +31,7 @@ class AddressBookLibrary:
             self.addressbook_list[item.name] = item
         return True
     
-    def get_locationwise_search_result(self, search_name: str, location_name: str, location_type: str = "state") -> list:
+    def get_locationwise_search_result(self, search_name: str, location_name: str, location_type: str = "state") -> list[type[Contact]]:
         """
             Description:
                 search Person in a City or State across the multiple Address Books
