@@ -1,10 +1,11 @@
 '''
     @Author: Nishanth
-    @Date: 30-03-2022 16:16:00
+    @Date: 30-03-2022 17:10:00
     @Last Modified by: Nishanth
-    @Last Modified time: 30-03-2022 16:16:00
+    @Last Modified time: 30-03-2022 17:10:00
     @Title: Unit testing the address book project
 '''
+import pickle
 import unittest
 from addressbook import AddressBook, Contact
 from addressbook_library import AddressBookLibrary
@@ -97,6 +98,13 @@ class AddressBookTest(unittest.TestCase):
         self.book2.get_sorted_contact_list("zip")
         self.assertEqual(list(self.book2.contact_list)[0], "Neth")
         self.assertEqual(list(self.book2.contact_list)[-1], "Blessy")
+
+    def test_save_as_text_file(self):
+        self.book2.save_as_txt_file()
+        file_stream = open(f"{self.book2.name}.txt", mode='rb')
+        content = pickle.load(file_stream)
+        file_stream.close()
+        self.assertEqual(self.book2.contact_list, content)
 
 if __name__ == "__main__":
     unittest.main()
