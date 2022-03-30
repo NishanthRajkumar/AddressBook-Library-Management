@@ -1,8 +1,8 @@
 '''
     @Author: Nishanth
-    @Date: 30-03-2022 08:16:00
+    @Date: 30-03-2022 16:16:00
     @Last Modified by: Nishanth
-    @Last Modified time: 30-03-2022 08:16:00
+    @Last Modified time: 30-03-2022 16:16:00
     @Title: Unit testing the address book project
 '''
 import unittest
@@ -17,10 +17,10 @@ class AddressBookTest(unittest.TestCase):
         self.book2 = AddressBook("book2")
         self.book1.add_contact("Nishanth", "Rajkumar", phone="9901104972")
         self.book1.add_contact("Jeffy", phone="9952429630")
-        self.book2.add_contact("Nish", email="nish@gmail.com", city="Bangalore")
-        self.book2.add_contact("Neth", email="neth@gmail.com", city="Melbourne")
-        self.book2.add_contact("Jeff", phone="9011090729", city="Bangalore", state="Karnataka")
-        self.book2.add_contact("Blessy", phone="9011090728", city="Mysore", state="Karnataka")
+        self.book2.add_contact("Nish", email="nish@gmail.com", city="Bangalore", state="KA", zip="560061")
+        self.book2.add_contact("Neth", email="neth@gmail.com", city="Melbourne", state="Vic")
+        self.book2.add_contact("Jeff", phone="9011090729", city="Bangalore", state="Karnataka", zip="560062")
+        self.book2.add_contact("Blessy", phone="9011090728", city="Mysore", state="Karnataka", zip= "560083")
 
     def test_add_contact(self):
         self.assertEqual(len(self.book1.contact_list), 2)
@@ -62,20 +62,20 @@ class AddressBookTest(unittest.TestCase):
         book3.add_contact("Nish", email="nish@gmail.com", state="Karnataka")
         self.library.add_multiple_addressbooks([self.book1, self.book2, book3])
         self.assertEqual(len(self.library.get_locationwise_search_result("Neth", "Melbourne", "city")), 2)
-        self.assertEqual(len(self.library.get_locationwise_search_result("Nish", "Karnataka", "state")), 1)
-        self.assertEqual(len(self.library.get_locationwise_search_result("Nish", "Karnataka")), 1)
+        self.assertEqual(len(self.library.get_locationwise_search_result("Nish", "KA", "state")), 1)
+        self.assertEqual(len(self.library.get_locationwise_search_result("Nish", "KA")), 1)
     
     def test_location_wise_contact_list(self):
         self.assertEqual(len(self.book2.get_locationwise_contact_list("Bangalore", "city")), 2)
         self.assertEqual(len(self.book2.get_locationwise_contact_list("Karnataka")), 2)
         self.assertRaises(ValueError, self.book2.get_locationwise_contact_list, "Karnataka", "stat")
         self.assertRaises(KeyError, self.book2.get_locationwise_contact_list, "BLR", "city")
-        self.assertRaises(KeyError, self.book2.get_locationwise_contact_list, "KA")
+        self.assertRaises(KeyError, self.book2.get_locationwise_contact_list, "Victoria")
 
     def test_locationwise_count(self):
         statewise_count = self.book2.get_locationwise_count()
         citywise_count = self.book2.get_locationwise_count("city")
-        self.assertEqual(len(statewise_count), 1)
+        self.assertEqual(len(statewise_count), 3)
         self.assertEqual(statewise_count["Karnataka"], 2)
         self.assertEqual(len(citywise_count), 3)
         self.assertEqual(citywise_count["Bangalore"], 2)
@@ -85,6 +85,18 @@ class AddressBookTest(unittest.TestCase):
         self.book2.get_sorted_contact_list()
         self.assertEqual(list(self.book2.contact_list)[0], "Blessy")
         self.assertEqual(list(self.book2.contact_list)[-1], "Nish")
+
+        self.book2.get_sorted_contact_list("state")
+        self.assertEqual(list(self.book2.contact_list)[0], "Nish")
+        self.assertEqual(list(self.book2.contact_list)[-1], "Neth")
+
+        self.book2.get_sorted_contact_list("city")
+        self.assertEqual(list(self.book2.contact_list)[0], "Nish")
+        self.assertEqual(list(self.book2.contact_list)[-1], "Blessy")
+
+        self.book2.get_sorted_contact_list("zip")
+        self.assertEqual(list(self.book2.contact_list)[0], "Neth")
+        self.assertEqual(list(self.book2.contact_list)[-1], "Blessy")
 
 if __name__ == "__main__":
     unittest.main()
