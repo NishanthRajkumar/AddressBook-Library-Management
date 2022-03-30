@@ -5,6 +5,7 @@
     @Last Modified time: 30-03-2022 17:10:00
     @Title: Unit testing the address book project
 '''
+import csv
 import pickle
 import unittest
 from addressbook import AddressBook, Contact
@@ -105,6 +106,25 @@ class AddressBookTest(unittest.TestCase):
         content = pickle.load(file_stream)
         file_stream.close()
         self.assertEqual(self.book2.contact_list, content)
+    
+    def test_save_as_csv_file(self):
+        self.book2.save_as_csv_file()
+        file_stream = open(f"{self.book2.name}.csv", mode='r')
+        csv_file = csv.reader(file_stream)
+        read_header = False
+        expected_list = {}
+        for row in csv_file:
+            contact = Contact()
+            if len(row) == 0:
+                continue
+            if read_header == False:
+                read_header = True
+                continue
+            contact.first_name, contact.last_name, contact.address = (row[0], row[1], row[2])
+            contact.city, contact.state, contact.zip, contact.phone, contact.email = (row[3], row[4], row[5], row[6], row[7])
+            expected_list[contact.name] = contact
+        file_stream.close()
+        self.assertEqual(self.book2.contact_list.keys(), expected_list.keys())
 
 if __name__ == "__main__":
     unittest.main()
