@@ -1,8 +1,8 @@
 '''
     @Author: Nishanth
-    @Date: 29-03-2022 20:38:00
+    @Date: 30-03-2022 08:16:00
     @Last Modified by: Nishanth
-    @Last Modified time: 29-03-2022 20:38:00
+    @Last Modified time: 30-03-2022 08:16:00
     @Title: Unit testing the address book project
 '''
 import unittest
@@ -21,6 +21,7 @@ class AddressBookTest(unittest.TestCase):
 
     def test_add_contact(self):
         self.assertEqual(len(self.book1.contact_list), 2)
+        self.assertRaises(KeyError, self.book2.add_contact, "Nish")
     
     def test_edit_contact(self):
         self.book1.edit_contact(name="Jeffy", last_name="Raj")
